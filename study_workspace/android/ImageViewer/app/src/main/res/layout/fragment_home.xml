@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frag_home_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context="com.yq.imageviewer.fragment.HomeFragment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/frag_home_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"/>
+
+    <com.yq.imageviewer.view.LoadingImageView
+        android:id="@+id/frag_home_iv_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+    <EditText
+        android:id="@+id/frag_home_et_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@mipmap/search"
+        android:drawablePadding="@dimen/dimen_3dp"
+        android:paddingTop="@dimen/dimen_5dp"
+        android:paddingBottom="@dimen/dimen_5dp"
+        android:paddingLeft="@dimen/dimen_10dp"
+        android:paddingRight="@dimen/dimen_10dp"
+        android:background="@drawable/shape_search"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/dimen_40dp"
+        android:layout_marginRight="@dimen/dimen_20dp"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textsize_15sp"/>
+</RelativeLayout>

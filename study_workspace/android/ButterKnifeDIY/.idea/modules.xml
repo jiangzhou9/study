@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ButterKnifeDIY.iml" filepath="$PROJECT_DIR$/ButterKnifeDIY.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lib-compiler/lib-compiler.iml" filepath="$PROJECT_DIR$/lib-compiler/lib-compiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lib-util/lib-util.iml" filepath="$PROJECT_DIR$/lib-util/lib-util.iml" />
+    </modules>
+  </component>
+</project>
