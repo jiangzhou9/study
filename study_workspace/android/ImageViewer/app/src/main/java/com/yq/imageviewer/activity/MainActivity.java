@@ -272,8 +272,8 @@ public class MainActivity extends BaseActivity implements SecurityUtil.onPermiss
     @Override
     public void onGranted() {
         prepareFingerprint();
-        //        showPasswordDialog();
-        mViewPager.setAdapter(new MAdapter(getSupportFragmentManager()));
+        showPasswordDialog();
+//        mViewPager.setAdapter(new MAdapter(getSupportFragmentManager()));
     }
 
     @Override
