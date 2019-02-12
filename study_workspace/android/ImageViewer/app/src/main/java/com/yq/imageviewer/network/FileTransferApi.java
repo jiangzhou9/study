@@ -17,7 +17,7 @@ public interface FileTransferApi {
      * Streaming的作用:可参考https://www.jianshu.com/p/92bb85fc07e8
      *
      * 其实在源码里，请求有返回后（不包括大文件解析），会走OkhttpCall的parseResponse，parseResponse中通过serviceMethod.toResponse(catchingBody)解析结果，
-     * toResponse()里调用responseConverter.convert(body)，然后这里的responseConverter是BuiltInConverters的responseBodyConverter()方法返回，这个方法
+     * toResponse()里调用responseConverter.convertAllToEncrypt(body)，然后这里的responseConverter是BuiltInConverters的responseBodyConverter()方法返回，这个方法
      * 会看有没有Streaming注解来返回不同的converter，有的话返回StreamingResponseBodyConverter，它的convert方法照原样返回，而没有的话返回BufferingResponseBodyConverter
      * 它的convert方法会走body.source().readAll()来整个读取出来
      *

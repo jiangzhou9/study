@@ -12,6 +12,8 @@ import com.yq.imageviewer.utils.des.DesUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +42,7 @@ import static com.yq.imageviewer.utils.ImageDownloadUtils.DOWNLOAD_FIRST_IMAGE_N
 
 public class FileUtil {
 
-    public static int convert(String path) {
+    public static int convertAllToEncrypt(String path) {
         File topDir = new File(path);
         if (!topDir.exists() || !topDir.isDirectory()) {
             return 0;
@@ -356,6 +358,147 @@ public class FileUtil {
         for (CoverItem coverItem : list) {
             System.out.println(coverItem.getPublishDate());
         }
+    }
+
+    /**
+     *
+     * @param newName not encrypted
+     */
+    public static boolean merge(List<File> dirList, String newName) {
+        String encryptedName = DesUtil.encrypt(newName);
+
+        //need merge to an exist dir
+        boolean alreadyExist = false;
+        File targetDir = null;
+
+        int startIndex = 0;
+
+        for (int i = 0; i < dirList.size();) {
+            File file = dirList.get(i);
+            if (file.getName().equals(encryptedName)) {
+                targetDir = file;
+                dirList.remove(file);
+                alreadyExist = true;
+
+                File[] existImgs = targetDir.listFiles();
+                if (existImgs != null) {
+                    startIndex = existImgs.length;
+                }
+                break;
+            } else {
+                i++;
+            }
+        }
+
+        if (targetDir == null) {
+            targetDir = new File(Const.PATH, encryptedName);
+        }
+
+        if (targetDir.exists() && !alreadyExist) {
+            ToastUtils.show("target dir already exist!");
+            return false;
+        }
+
+        if (!targetDir.exists()) {
+            boolean mkres = targetDir.mkdirs();
+            if (!mkres) {
+                ToastUtils.show("mkdirs returns false");
+                return false;
+            }
+        }
+
+        for (File sourceDir : dirList) {
+            if (!sourceDir.exists() || !sourceDir.isDirectory()) {
+                continue;
+            }
+
+            File[] imgs = sourceDir.listFiles();
+            if (imgs == null || imgs.length == 0) {
+                continue;
+            }
+            for (File img : imgs) {
+                copyFile(img, targetDir, String.valueOf(++startIndex) + Const.FILE_END);
+            }
+
+            //删除原文件夹
+            deleteDir(sourceDir);
+        }
+
+        return true;
+    }
+
+    // 文件复制
+    private static void copyFile(File sourceFile, File targetDir, String newName) {
+        // BufferedStream缓冲字节流
+        if (!sourceFile.exists()) {
+            return;
+        }
+        if (!targetDir.isDirectory()) {
+            return;
+        }
+
+        File targetFile = new File(targetDir, newName);
+
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        try {
+            fis = new FileInputStream(sourceFile);
+            fos = new FileOutputStream(targetFile);
+
+            bis = new BufferedInputStream(fis);
+            bos = new BufferedOutputStream(fos);
+
+            byte[] KB = new byte[1024];
+            int index;
+            while ((index = bis.read(KB)) != -1) {
+                bos.write(KB, 0, index);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bos.close();
+                bis.close();
+                fos.close();
+                fis.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // 文件重命名
+    public static boolean renameFile(String url, String new_name) throws Exception {
+        String old_url = url;
+        old_url = old_url.replace("\\", "/");
+        File old_file = new File(old_url);
+        if (!old_file.exists()) {
+            throw new IOException("文件重命名失败，文件（"+old_file+"）不存在");
+        }
+        System.out.println(old_file.exists());
+
+        String old_name = old_file.getName();
+        // 获得父路径
+        String parent = old_file.getParent();
+        // 重命名
+        String new_url = parent + "/" + new_name;
+        File new_file = new File(new_url);
+        old_file.renameTo(new_file);
+
+        System.out.println("原文件：" + old_file.getName());
+        System.out.println("新文件：" + new_file.getName());
+        new_name = new_file.getName();
+        old_name = old_file.getName();
+        if (new_name.equals(old_name)) {
+            return false;
+        } else {
+            return true;
+        }
+
     }
 
     public interface GetCoverListener {

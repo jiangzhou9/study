@@ -2,25 +2,18 @@ package com.yq.imageviewer.fragment;
 
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.yq.imageviewer.Const;
 import com.yq.imageviewer.R;
-import com.yq.imageviewer.activity.MainActivity;
 import com.yq.imageviewer.activity.StatusActivity;
 import com.yq.imageviewer.event.RefreshEvent;
 import com.yq.imageviewer.utils.DeviceUtils;
@@ -92,7 +85,7 @@ public class FindFragment extends BaseFragment {
                             FileUtil.getDownloadedDirFromTemp(), titleAndDate));
 
                     alertDialog.dismiss();
-                    showToast("downloaded file convert success");
+                    showToast("downloaded file convertAllToEncrypt success");
                 }
             }
         });
@@ -110,8 +103,8 @@ public class FindFragment extends BaseFragment {
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    int count = FileUtil.convert(Const.PATH);
-                    showToast("convert finish, " + count + " were converted");
+                    int count = FileUtil.convertAllToEncrypt(Const.PATH);
+                    showToast("convertAllToEncrypt finish, " + count + " were converted");
                     EventBus.getDefault().post(new RefreshEvent());
                 }
             }, null

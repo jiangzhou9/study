@@ -19,9 +19,15 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yq.imageviewer.R;
+import com.yq.imageviewer.event.BackPressEvent;
+import com.yq.imageviewer.event.ClickDeleteEvent;
+import com.yq.imageviewer.event.ClickMergeEvent;
+import com.yq.imageviewer.event.EnterSelectModeEvent;
+import com.yq.imageviewer.event.LastSelectUnCheckEvent;
 import com.yq.imageviewer.event.LoadFinishEvent;
 import com.yq.imageviewer.event.MainBottomAnimEvent;
 import com.yq.imageviewer.fragment.FindFragment;
@@ -35,28 +41,28 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.concurrent.TimeUnit;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity implements SecurityUtil.onPermissionListener {
 
     private static final int BOTTOM_ANIM_DURATION = 300;
 
-    @BindView(R.id.act_main_vp) ScrollViewPager mViewPager;
-    @BindView(R.id.act_main_ll_bottom) View mLlBottom;
-    @BindView(R.id.act_main_tv_home_count) TextView mTvCount;
+    @BindView(R.id.act_main_vp)
+    ScrollViewPager mViewPager;
+    @BindView(R.id.act_main_ll_bottom)
+    View mLlBottom;
+    @BindView(R.id.act_main_tv_home_count)
+    TextView mTvCount;
+
+    @BindView(R.id.act_main_select_mode_container)
+    LinearLayout mLongPressTopContainer;
 
     private AlertDialog mLoginDialog;
 
-    private float mBottomBar;
+    private float mBottomBarHeight;
+    private boolean mBottomBarHide;
 
     private MCountTimer mMCountTimer;
 
@@ -65,14 +71,16 @@ public class MainActivity extends BaseActivity implements SecurityUtil.onPermiss
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        EventBus.getDefault().register(this);
+        EventBus.getDefault()
+            .register(this);
         StatusBarUtil.setTranslucentForImageView(this, 0, null);
         mViewPager.setScrollable(false);
 
-        mBottomBar = getResources().getDimension(R.dimen.main_bottom_height);
+        mBottomBarHeight = getResources().getDimension(R.dimen.main_bottom_height);
 
-        SecurityUtil.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE}, this);
+        SecurityUtil.requestPermissions(this,
+            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE}, this);
     }
 
     private void showPasswordDialog() {
@@ -115,14 +123,17 @@ public class MainActivity extends BaseActivity implements SecurityUtil.onPermiss
             public void run() {
                 etPsd.requestFocus();
                 //调用系统输入法
-                InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager inputManager =
+                    (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputManager.showSoftInput(etPsd, 0);
             }
         }, 300);
     }
 
     private void checkPassword(EditText etPsd) {
-        String psd = etPsd.getText().toString().trim();
+        String psd = etPsd.getText()
+            .toString()
+            .trim();
         if (psd.equals("675725")) {
             loginSucc();
         } else {
@@ -132,12 +143,13 @@ public class MainActivity extends BaseActivity implements SecurityUtil.onPermiss
     }
 
     private void prepareFingerprint() {
-        FingerprintManager fingerprintManager = (FingerprintManager) this.getSystemService(Context.FINGERPRINT_SERVICE);
+        FingerprintManager fingerprintManager =
+            (FingerprintManager) this.getSystemService(Context.FINGERPRINT_SERVICE);
         if (fingerprintManager == null || !fingerprintManager.hasEnrolledFingerprints()) {
             return;
         }
-        FingerprintManager.AuthenticationCallback authenticationCallback = new FingerprintManager
-            .AuthenticationCallback() {
+        FingerprintManager.AuthenticationCallback authenticationCallback =
+            new FingerprintManager.AuthenticationCallback() {
             @Override
             public void onAuthenticationError(int errorCode, CharSequence errString) {}
 
@@ -157,7 +169,8 @@ public class MainActivity extends BaseActivity implements SecurityUtil.onPermiss
             showToast("没有指纹识别权限");
             return;
         }
-        fingerprintManager.authenticate(null, new CancellationSignal(), 0, authenticationCallback, null);
+        fingerprintManager.authenticate(null, new CancellationSignal(), 0, authenticationCallback
+            , null);
     }
 
     private void loginSucc() {
@@ -181,14 +194,34 @@ public class MainActivity extends BaseActivity implements SecurityUtil.onPermiss
         mTvCount.setText(String.valueOf(event.getCount()));
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
+    public void onEnterSelectModeEvent(EnterSelectModeEvent event) {
+        mLongPressTopContainer.setVisibility(View.VISIBLE);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
+    public void onLastUnCheckEvent(LastSelectUnCheckEvent event) {
+        mLongPressTopContainer.setVisibility(View.GONE);
+    }
+
     private void showBottomBar() {
-        ObjectAnimator.ofFloat(mLlBottom, "translationY", mBottomBar, 0)
-            .setDuration(BOTTOM_ANIM_DURATION).start();
+        if (!mBottomBarHide) {
+            return;
+        }
+        mBottomBarHide = false;
+        ObjectAnimator.ofFloat(mLlBottom, "translationY", mBottomBarHeight, 0)
+            .setDuration(BOTTOM_ANIM_DURATION)
+            .start();
     }
 
     private void hideBottomBar() {
-        ObjectAnimator.ofFloat(mLlBottom, "translationY", 0, mBottomBar)
-            .setDuration(BOTTOM_ANIM_DURATION).start();
+        if (mBottomBarHide) {
+            return;
+        }
+        mBottomBarHide = true;
+        ObjectAnimator.ofFloat(mLlBottom, "translationY", 0, mBottomBarHeight)
+            .setDuration(BOTTOM_ANIM_DURATION)
+            .start();
     }
 
     @OnClick(R.id.act_main_iv_home)
@@ -201,10 +234,21 @@ public class MainActivity extends BaseActivity implements SecurityUtil.onPermiss
         mViewPager.setCurrentItem(1);
     }
 
+    @OnClick(R.id.act_main_select_mode_merge)
+    public void onMergeClick() {
+        EventBus.getDefault().post(new ClickMergeEvent());
+    }
+
+    @OnClick(R.id.act_main_select_mode_delete)
+    public void onDeleteClick() {
+        EventBus.getDefault().post(new ClickDeleteEvent());
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+        EventBus.getDefault()
+            .unregister(this);
     }
 
     @Override
@@ -216,10 +260,10 @@ public class MainActivity extends BaseActivity implements SecurityUtil.onPermiss
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
         @NonNull int[] grantResults) {
         if (requestCode == SecurityUtil.ALL) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //用户同意，执行操作
                 onGranted();
-            }else{
+            } else {
                 onRefused();
             }
         }
@@ -228,8 +272,8 @@ public class MainActivity extends BaseActivity implements SecurityUtil.onPermiss
     @Override
     public void onGranted() {
         prepareFingerprint();
-        showPasswordDialog();
-//        mViewPager.setAdapter(new MAdapter(getSupportFragmentManager()));
+        //        showPasswordDialog();
+        mViewPager.setAdapter(new MAdapter(getSupportFragmentManager()));
     }
 
     @Override
@@ -239,6 +283,11 @@ public class MainActivity extends BaseActivity implements SecurityUtil.onPermiss
 
     @Override
     public void onBackPressed() {
+        if (HomeFragment.sSelectMode) {
+            mLongPressTopContainer.setVisibility(View.GONE);
+            EventBus.getDefault().post(new BackPressEvent());
+            return;
+        }
         if (mMCountTimer != null && mMCountTimer.isRunning()) {
             finish();
         }

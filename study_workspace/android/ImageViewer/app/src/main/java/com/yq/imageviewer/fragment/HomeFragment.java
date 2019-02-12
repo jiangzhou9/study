@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -17,7 +18,9 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.yq.imageviewer.Const;
@@ -25,6 +28,11 @@ import com.yq.imageviewer.R;
 import com.yq.imageviewer.activity.ImageListActivity;
 import com.yq.imageviewer.adapter.CoverListAdapter;
 import com.yq.imageviewer.bean.CoverItem;
+import com.yq.imageviewer.event.BackPressEvent;
+import com.yq.imageviewer.event.ClickDeleteEvent;
+import com.yq.imageviewer.event.ClickMergeEvent;
+import com.yq.imageviewer.event.EnterSelectModeEvent;
+import com.yq.imageviewer.event.LastSelectUnCheckEvent;
 import com.yq.imageviewer.event.LoadFinishEvent;
 import com.yq.imageviewer.event.MainBottomAnimEvent;
 import com.yq.imageviewer.event.RefreshEvent;
@@ -38,10 +46,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public class HomeFragment extends BaseFragment implements CoverListAdapter.ElementListener,
     KeyboardChangeUtil.OnKeyboardChangeListener {
@@ -51,10 +61,22 @@ public class HomeFragment extends BaseFragment implements CoverListAdapter.Eleme
     private static final float ALPHA_SEARCH_FOCUS = 1f;
     private static final float ALPHA_SEARCH_UNFOCUS = 0.3f;
 
-    @BindView(R.id.frag_home_root) RelativeLayout mRootView;
-    @BindView(R.id.frag_home_rv) RecyclerView mRecyclerView;
-    @BindView(R.id.frag_home_iv_loading) LoadingImageView mIvLoading;
-    @BindView(R.id.frag_home_et_filter) EditText mEtFilter;
+    public static boolean sSelectMode = false;
+
+    @BindView(R.id.frag_home_root)
+    RelativeLayout mRootView;
+    @BindView(R.id.frag_home_rv)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.frag_home_iv_loading)
+    LoadingImageView mIvLoading;
+    @BindView(R.id.frag_home_et_filter)
+    EditText mEtFilter;
+    @BindView(R.id.frag_home_iv_refresh)
+    ImageView mIvRefresh;
+    @BindView(R.id.frag_home_iv_totop)
+    ImageView mIvToTop;
+    @BindView(R.id.frag_home_iv_tobottom)
+    ImageView mIvToBottom;
 
     private List<CoverItem> mCoverItemList;
     private CoverListAdapter mAdapter;
@@ -70,12 +92,17 @@ public class HomeFragment extends BaseFragment implements CoverListAdapter.Eleme
 
     @Override
     public void initView(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        EventBus.getDefault().register(this);
+        EventBus.getDefault()
+            .register(this);
 
         new KeyboardChangeUtil().addViewChangeListener(mRootView, this);
-        mEtFilter.setAlpha(0.2f);
+        mEtFilter.setAlpha(0.5f);
+        mIvRefresh.setAlpha(0.7f);
+        mIvToTop.setAlpha(0.7f);
+        mIvToBottom.setAlpha(0.7f);
 
-        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(Const.COLUMN, StaggeredGridLayoutManager.VERTICAL));
+        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(Const.COLUMN,
+            StaggeredGridLayoutManager.VERTICAL));
         setItemDecoration(mRecyclerView);
 
         mAdapter = new CoverListAdapter(getContext());
@@ -95,7 +122,8 @@ public class HomeFragment extends BaseFragment implements CoverListAdapter.Eleme
     }
 
     private void setItemDecoration(RecyclerView recyclerView) {
-        VideoListItemDecoration decoration = new VideoListItemDecoration(DeviceUtils.dp2px(getContext(), 1));
+        VideoListItemDecoration decoration =
+            new VideoListItemDecoration(DeviceUtils.dp2px(getContext(), 1));
         recyclerView.addItemDecoration(decoration);
     }
 
@@ -123,7 +151,8 @@ public class HomeFragment extends BaseFragment implements CoverListAdapter.Eleme
     private void changeData(List<CoverItem> coverItemList) {
         mAdapter.setCoverItems(coverItemList);
         mAdapter.notifyDataSetChanged();
-        EventBus.getDefault().post(new LoadFinishEvent(coverItemList.size()));
+        EventBus.getDefault()
+            .post(new LoadFinishEvent(coverItemList.size()));
     }
 
     private void changeSearchEtStatus(final boolean show) {
@@ -148,7 +177,8 @@ public class HomeFragment extends BaseFragment implements CoverListAdapter.Eleme
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     int val = (int) animation.getAnimatedValue();
-                    RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mEtFilter.getLayoutParams();
+                    RelativeLayout.LayoutParams lp =
+                        (RelativeLayout.LayoutParams) mEtFilter.getLayoutParams();
                     lp.width = val;
                     mEtFilter.setLayoutParams(lp);
                 }
@@ -160,8 +190,10 @@ public class HomeFragment extends BaseFragment implements CoverListAdapter.Eleme
             mSearchViewAnimSet.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (!TextUtils.isEmpty(mEtFilter.getText()) && mEtFilter.getText().length() != 0) {
-                        mEtFilter.setSelection(mEtFilter.getText().length());
+                    if (!TextUtils.isEmpty(mEtFilter.getText()) && mEtFilter.getText()
+                        .length() != 0) {
+                        mEtFilter.setSelection(mEtFilter.getText()
+                            .length());
                     }
                 }
             });
@@ -177,9 +209,111 @@ public class HomeFragment extends BaseFragment implements CoverListAdapter.Eleme
         mSearchViewAnimSet.start();
     }
 
+    private void exitSelectMode() {
+        sSelectMode = false;
+        mAdapter.unSelectAll();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
     public void onDataSynEvent(RefreshEvent refreshEvent) {
         load();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
+    public void onBackPressEvent(BackPressEvent backPressEvent) {
+        //只需要退出selectmode就行
+        exitSelectMode();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMergeClickEvent(ClickMergeEvent event) {
+        List<CoverItem> selected = mAdapter.getSelectedItems();
+        if (selected == null || selected.size() == 0) {
+            return;
+        }
+        final String gap = "*";
+        String title = "", date = "";
+        final List<File> dirList = new ArrayList<>(selected.size());
+        for (int i = 0; i < selected.size(); i++) {
+            CoverItem coverItem = selected.get(i);
+            dirList.add(coverItem.getDirectory());
+
+            title += coverItem.getTitle();
+            date += coverItem.getPublishDate();
+
+            if (i != selected.size() - 1) {
+                title += gap;
+                date += gap;
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        final View dialogView = View.inflate(getContext(), R.layout.dialog_merge_title, null);
+
+        final EditText etTitle = dialogView.findViewById(R.id.dlg_merge_title);
+        final EditText etDate = dialogView.findViewById(R.id.dlg_merge_date);
+        final Button button = dialogView.findViewById(R.id.dlg_merge_confirm);
+
+        builder.setView(dialogView);
+        builder.setCancelable(true);
+
+        final AlertDialog mergeDialog = builder.create();
+
+        etTitle.setText(title);
+        etDate.setText(date);
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                String newTitle = etTitle.getText().toString();
+                String newDate = etDate.getText().toString();
+
+                boolean succ = FileUtil.merge(dirList, newTitle + Const.GAP_TITLE_TIME + newDate);
+                mergeDialog.dismiss();
+                EventBus.getDefault().post(new LastSelectUnCheckEvent());
+                exitSelectMode();
+
+                if (succ) {
+                    load();
+                }
+            }
+        });
+        mergeDialog.show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDeleteClickEvent(ClickDeleteEvent event) {
+        showDialog("Confirm Delete?", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                for (CoverItem coverItem : mAdapter.getSelectedItems()) {
+                    FileUtil.deleteDir(coverItem.getDirectory());
+                    mCoverItemList.remove(coverItem);
+                    mAdapter.remove(coverItem);
+                }
+                exitSelectMode();
+                EventBus.getDefault().post(new LastSelectUnCheckEvent());
+            }
+        }, null);
+    }
+
+    @OnClick(R.id.frag_home_iv_refresh)
+    public void onRefreshClick() {
+        load();
+    }
+
+    @OnClick(R.id.frag_home_iv_totop)
+    public void onToTopClick() {
+        mRecyclerView.scrollToPosition(0);
+        EventBus.getDefault()
+            .post(new MainBottomAnimEvent().setHide(false));
+    }
+
+    @OnClick(R.id.frag_home_iv_tobottom)
+    public void onToBottomClick() {
+        mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+        EventBus.getDefault()
+            .post(new MainBottomAnimEvent().setHide(false));
     }
 
     @Override
@@ -197,17 +331,7 @@ public class HomeFragment extends BaseFragment implements CoverListAdapter.Eleme
             AppUtil.hideSoftInput(getActivity());
             return;
         }
-        showDialog("Delete?",
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    FileUtil.deleteDir(coverItem.getDirectory());
-                    mCoverItemList.remove(coverItem);
-                    mAdapter.remove(pos);
-                }
-            },
-            null
-        );
+        EventBus.getDefault().post(new EnterSelectModeEvent());
     }
 
     @Override
@@ -236,10 +360,12 @@ public class HomeFragment extends BaseFragment implements CoverListAdapter.Eleme
             }
             mScrolledY += dy;
             if (mScrolledY > THRESHOLD_SCROLL && !mBottomHide) {
-                EventBus.getDefault().post(mMainBottomAnimEvent.setHide(true));
+                EventBus.getDefault()
+                    .post(mMainBottomAnimEvent.setHide(true));
                 mBottomHide = true;
             } else if (mScrolledY < -THRESHOLD_SCROLL && mBottomHide) {
-                EventBus.getDefault().post(mMainBottomAnimEvent.setHide(false));
+                EventBus.getDefault()
+                    .post(mMainBottomAnimEvent.setHide(false));
                 mBottomHide = false;
             }
         }
@@ -259,7 +385,8 @@ public class HomeFragment extends BaseFragment implements CoverListAdapter.Eleme
         }
 
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+            RecyclerView.State state) {
             outRect.bottom = space;
             outRect.left = space / 2;
             outRect.right = space / 2;
@@ -284,7 +411,8 @@ public class HomeFragment extends BaseFragment implements CoverListAdapter.Eleme
 
             List<CoverItem> filteredList = new ArrayList<>();
             for (CoverItem coverItem : mCoverItemList) {
-                if (coverItem.getTitle().contains(s)) {
+                if (coverItem.getTitle()
+                    .contains(s)) {
                     filteredList.add(coverItem);
                 }
             }

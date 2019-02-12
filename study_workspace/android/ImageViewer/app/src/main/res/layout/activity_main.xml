@@ -76,5 +76,32 @@
             app:layout_constraintGuide_begin="192dp" />
     </android.support.constraint.ConstraintLayout>
 
+    <LinearLayout
+        android:id="@+id/act_main_select_mode_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_bottom_height"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/default_back"
+        android:visibility="gone">
 
+        <TextView
+            android:id="@+id/act_main_select_mode_merge"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="@color/c1"
+            android:gravity="center"
+            android:text="MERGE"/>
+
+        <TextView
+            android:id="@+id/act_main_select_mode_delete"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="@color/c1"
+            android:gravity="center"
+            android:text="DELETE"/>
+    </LinearLayout>
 </RelativeLayout>
