@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.yq.imageviewer.BuildConfig;
 import com.yq.imageviewer.R;
 import com.yq.imageviewer.event.BackPressEvent;
 import com.yq.imageviewer.event.ClickDeleteEvent;
@@ -143,13 +145,14 @@ public class MainActivity extends BaseActivity implements SecurityUtil.onPermiss
     }
 
     private void prepareFingerprint() {
-        FingerprintManager fingerprintManager =
-            (FingerprintManager) this.getSystemService(Context.FINGERPRINT_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M) {
+            return;
+        }
+        FingerprintManager fingerprintManager = (FingerprintManager) this.getSystemService(Context.FINGERPRINT_SERVICE);
         if (fingerprintManager == null || !fingerprintManager.hasEnrolledFingerprints()) {
             return;
         }
-        FingerprintManager.AuthenticationCallback authenticationCallback =
-            new FingerprintManager.AuthenticationCallback() {
+        FingerprintManager.AuthenticationCallback authenticationCallback = new FingerprintManager.AuthenticationCallback() {
             @Override
             public void onAuthenticationError(int errorCode, CharSequence errString) {}
 
@@ -169,8 +172,7 @@ public class MainActivity extends BaseActivity implements SecurityUtil.onPermiss
             showToast("没有指纹识别权限");
             return;
         }
-        fingerprintManager.authenticate(null, new CancellationSignal(), 0, authenticationCallback
-            , null);
+        fingerprintManager.authenticate(null, new CancellationSignal(), 0, authenticationCallback, null);
     }
 
     private void loginSucc() {
