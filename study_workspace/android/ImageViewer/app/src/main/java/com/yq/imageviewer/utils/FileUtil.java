@@ -94,6 +94,21 @@ public class FileUtil {
         return newFile;
     }
 
+    public static File renameDirToUnEncryped(File oldFile) {
+        if (oldFile == null) {
+            return null;
+        }
+        File newFile = null;
+        try {
+            newFile = new File(oldFile.getParent(), DesUtil.decrypt(oldFile.getName()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        oldFile.renameTo(newFile);
+
+        return newFile;
+    }
+
     //文件夹下文件改为固定后缀（文件夹已加密）
     public static void renameFileEnd(File dir) {
         if (dir == null) {
@@ -114,6 +129,45 @@ public class FileUtil {
 
             oldFile.renameTo(new File(oldFile.getParent(), newFileName));
         }
+    }
+
+    //文件夹下文件改为.jpg
+    public static void recoverFileEnd(File dir) {
+        if (dir == null) {
+            return;
+        }
+        File[] children = dir.listFiles();
+        if (children == null) {
+            return;
+        }
+        for (File oldFile : children) {
+            String oriFileName = oldFile.getName();
+            String newFileName;
+            if (oriFileName.contains(".")) {
+                newFileName = oldFile.getName().substring(0, oriFileName.lastIndexOf(".")) + ".jpg";
+            } else {
+                newFileName = oriFileName + ".jpg";
+            }
+
+            oldFile.renameTo(new File(oldFile.getParent(), newFileName));
+        }
+    }
+
+    public static int convertAllToUnEncrypt(String path) {
+        File topDir = new File(path);
+        if (!topDir.exists() || !topDir.isDirectory()) {
+            return 0;
+        }
+
+        File[] pages = topDir.listFiles();
+        int count = 0;
+        for (File page : pages) {
+            //in it first
+            recoverFileEnd(page);
+
+            renameDirToUnEncryped(page);
+        }
+        return count;
     }
 
     public static void getCovers(String path, final GetCoverListener listener) {

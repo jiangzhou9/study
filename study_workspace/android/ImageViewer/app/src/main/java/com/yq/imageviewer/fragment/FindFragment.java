@@ -97,7 +97,7 @@ public class FindFragment extends BaseFragment {
         StatusActivity.start(this, StatusActivity.Status.SYNC_INPUT);
     }
 
-    @OnClick(R.id.frag_setting_btn_convert)
+    @OnClick(R.id.frag_setting_btn_convert_to_encrypted)
     public void onConvertClick() {
         showDialog("format exp: XX | YYYY_2018-05-21",
             new DialogInterface.OnClickListener() {
@@ -106,6 +106,19 @@ public class FindFragment extends BaseFragment {
                     int count = FileUtil.convertAllToEncrypt(Const.PATH);
                     showToast("convertAllToEncrypt finish, " + count + " were converted");
                     EventBus.getDefault().post(new RefreshEvent());
+                }
+            }, null
+        );
+    }
+
+    @OnClick(R.id.frag_setting_btn_convert_to_unencrypted)
+    public void onConvertToUnEncryptedClick() {
+        showDialog("confirm convert all to unencrypted?",
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    int count = FileUtil.convertAllToUnEncrypt(Const.PATH);
+                    showToast("convertAllToUnEncrypt finish, " + count + " were converted");
                 }
             }, null
         );
