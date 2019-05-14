@@ -10,30 +10,20 @@
 
 @implementation DetailItem
 
-- (NSComparisonResult)compare:(DetailItem *)other{
-    NSString *name1 = self.imgName;
-    NSString *name2 = other.imgName;
-    
-    if (name1.length == 0 && name2.length != 0) {
-        return (NSComparisonResult)NSOrderedDescending;
-    } else if (name1.length != 0 && name2.length == 0) {
-        return (NSComparisonResult)NSOrderedAscending;
-    } else if (name1.length == 0 && name2.length == 0) {
-        return (NSComparisonResult)NSOrderedSame;
++(DetailItem *) convert:(NSDictionary *) dic tabIndex: (int) tabIndex {
+    DetailItem *res = [DetailItem new];
+    for (NSString *key in dic) {
+        if ([key isEqualToString:@"img_name"]) {
+            res.imgName = dic[key];
+        } else if ([key isEqualToString:@"img_path"]) {
+            res.imgPath = [NSString stringWithFormat:@"%@/%d/%@", Const.getBaseImgUrl, tabIndex, dic[key]];
+        } else if ([key isEqualToString:@"img_width"]) {
+            res.imgWidth = [dic[key] floatValue];
+        } else if ([key isEqualToString:@"img_height"]) {
+            res.imgHeight = [dic[key] intValue];
+        }
     }
-    
-    NSArray *arr1 = [name1 componentsSeparatedByString:@"."];
-    NSArray *arr2 = [name2 componentsSeparatedByString:@"."];
-    
-    int val1 = [[arr1 objectAtIndex:0] intValue];
-    int val2 = [[arr2 objectAtIndex:0] intValue];
-    if (val1 > val2) {
-        return (NSComparisonResult)NSOrderedDescending;
-    } else if (val1 < val2) {
-        return (NSComparisonResult)NSOrderedAscending;
-    }
-    
-    return (NSComparisonResult)NSOrderedSame;
+    return res;
 }
 
 @end

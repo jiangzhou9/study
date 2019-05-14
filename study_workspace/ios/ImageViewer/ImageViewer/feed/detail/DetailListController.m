@@ -13,7 +13,7 @@
 @interface DetailListController () <UITableViewDataSource, UITableViewDelegate>
 @property (strong, nonatomic) IBOutlet UITableView *imgTableView;
 
-@property (nonatomic, strong) NSArray<DetailItem *> *imgArray;
+@property (nonatomic, strong) NSMutableArray<DetailItem *> *imgArray;
 
 @end
 
@@ -22,8 +22,30 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self requestList];
     
-    self.imgArray = [FileUtil getImgInGroup:self.groupPath];
+    self.imgArray = [NSMutableArray new];
+}
+
+- (void)requestList {
+    NSString *url = [NSString stringWithFormat:@"%@/%d/%@", Const.getDetailListUrl, self.tabIndex, self.groupPath];
+    NSString *utf8Url = [url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/html", nil];
+    [manager GET:utf8Url parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+        
+        NSArray *list = [responseObject objectForKey:@"detaillist"];
+        for (NSDictionary *detailItemDic in list) {
+            DetailItem *item = [DetailItem convert:detailItemDic tabIndex:self.tabIndex];
+            [self.imgArray addObject:item];
+        }
+        
+        [self.imgTableView reloadData];
+        NSLog(@"requestCoverList success");
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
+        NSLog(@"requestCoverList Error: %@", error);
+    }];
 }
 
 #pragma mark - Table view data source
@@ -34,7 +56,11 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     DetailViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER forIndexPath:indexPath];
-    cell.img.image = [UIImage imageWithContentsOfFile:[self.imgArray objectAtIndex:indexPath.item].imgPath];
+    
+    NSString *imgUrl = [self.imgArray objectAtIndex:indexPath.item].imgPath;
+    NSString *utf8ImgUrl = [imgUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    [cell.img sd_setImageWithURL:[NSURL URLWithString: utf8ImgUrl] placeholderImage:nil];
+
     return cell;
 }
 
@@ -43,8 +69,10 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UIImage *img = [UIImage imageWithContentsOfFile:[self.imgArray objectAtIndex:indexPath.item].imgPath];
-    return SCREEN_WIDTH * img.size.height / img.size.width;
+    float serverWidth = [self.imgArray objectAtIndex:indexPath.item].imgWidth;
+    float serverHeight = [self.imgArray objectAtIndex:indexPath.item].imgHeight;
+
+    return SCREEN_WIDTH * serverHeight / serverWidth;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -55,7 +83,7 @@
         [pathArray addObject:detailItem.imgPath];
     }
     browser.dataSource = pathArray;
-    browser.downLoadNeeded = YES;
+    browser.deleteNeeded = YES;
     browser.currentPhotoIndex= indexPath.item;
     [self presentViewController:browser animated:YES completion:^{
         

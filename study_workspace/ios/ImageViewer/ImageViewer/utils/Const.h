@@ -10,10 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define KEY_IP @"ip"
+
 @interface Const : NSObject
-+(NSString *) getGap;
-+(NSString *) getRootFolderName;
-+(NSString *) getPsd;
++(NSString *) getBaseUrl;
++(void) saveBaseUrl :(NSString *)ip;
+
++(NSString *) getTabListUrl;
+
++(NSString *) getCoverListUrl;
++(NSString *) getBaseImgUrl;
+
++(NSString *) getDetailListUrl;
 @end
 
 NS_ASSUME_NONNULL_END

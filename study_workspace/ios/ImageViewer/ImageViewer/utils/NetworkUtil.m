@@ -10,17 +10,6 @@
 
 @implementation NetworkUtil
 
-+ (void) requestHtml :(NSString *)url {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSString *result = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
-        NSLog(@"thread: %@, result: %@", [NSThread isMainThread] ? @"yes" : @"no", result);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-    }];
-}
-
 + (void) downloadImage :(NSString *) url {
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
@@ -40,13 +29,5 @@
     [downloadTask resume];
 }
 
-//extract all usable imageurl in pageUrl
-+ (NSMutableArray<NSString *> *) extractImageUrl :(NSString *)htmlStr {
-    NSMutableArray<NSString *> *res = [[NSMutableArray alloc] init];
-    
-    NSError *err = nil;
-    ONOXMLDocument *document = [ONOXMLDocument XMLDocumentWithString:htmlStr encoding:NSUTF8StringEncoding error:&err];
-    return res;
-}
 
 @end

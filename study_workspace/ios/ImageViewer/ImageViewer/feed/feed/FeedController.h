@@ -10,15 +10,15 @@
 #import "CHTCollectionViewWaterfallLayout.h"
 #import "FeedViewCell.h"
 #import "DetailListController.h"
-#import "Cats.h"
 #import "Common.h"
 #import "CoverItem.h"
 #import "SettingViewController.h"
+#import "UIImageView+WebCache.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FeedController : UIViewController
-
+@property(nonatomic, assign) int tabIndex;
 @end
 
 NS_ASSUME_NONNULL_END

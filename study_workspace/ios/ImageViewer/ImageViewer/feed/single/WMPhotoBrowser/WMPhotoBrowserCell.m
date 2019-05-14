@@ -119,7 +119,8 @@
     }else if ([model isKindOfClass:[NSString class]]){
         NSString *aString = (NSString *)model;
         if ([aString rangeOfString:@"http"].location!=NSNotFound) {
-            [self.imageView sd_setImageWithURL:[NSURL URLWithString:aString] placeholderImage:[UIImage imageNamed:@"placeholder"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+            NSString *utf8ImgUrl = [aString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+            [self.imageView sd_setImageWithURL:[NSURL URLWithString:utf8ImgUrl] placeholderImage:nil completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
                 [self resizeSubviews];
             }];
         }else{

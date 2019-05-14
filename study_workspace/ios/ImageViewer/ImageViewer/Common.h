@@ -11,7 +11,6 @@
 
 #import "Const.h"
 #import "AppDelegate.h"
-#import "FileUtil.h"
 #import "NetworkUtil.h"
 #import "ScreenUtil.h"
 #import "ColorUtil.h"

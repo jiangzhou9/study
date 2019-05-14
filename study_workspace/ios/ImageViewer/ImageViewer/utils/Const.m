@@ -10,16 +10,38 @@
 
 @implementation Const
 
-+ (NSString *)getGap {
-    return @"_";
++(NSString *) getBaseUrl {
+    NSUserDefaults *ipDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *savedIp = [ipDefaults objectForKey:KEY_IP];
+    if (savedIp.length == 0) {
+        savedIp = @"http://192.168.10.110:9999/";
+        [self saveBaseUrl:savedIp];
+    }
+    return savedIp;
+//    return @"http://10.2.154.138:9999/";
 }
 
-+ (NSString *)getRootFolderName {
-    return @"SCHOOLGIRL";
-//    return @"root";
++(void) saveBaseUrl :(NSString *)ip {
+    if (ip.length == 0) {
+        return;
+    }
+    NSUserDefaults *ipDefaults = [NSUserDefaults standardUserDefaults];
+    [ipDefaults setObject:ip forKey:KEY_IP];
 }
 
-+(NSString *) getPsd {
-    return @"675725";
++(NSString *) getTabListUrl {
+    return [NSString stringWithFormat:@"%@tablist", [self getBaseUrl]];
+}
+
++(NSString *) getCoverListUrl {
+    return [NSString stringWithFormat:@"%@coverlist", [self getBaseUrl]];
+}
+
++(NSString *) getBaseImgUrl {
+    return [NSString stringWithFormat:@"%@image", [Const getBaseUrl]];
+}
+
++(NSString *) getDetailListUrl {
+    return [NSString stringWithFormat:@"%@detaillist", [self getBaseUrl]];
 }
 @end

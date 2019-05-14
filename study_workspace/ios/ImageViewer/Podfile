@@ -2,6 +2,8 @@ platform :ios, '7.0'
 
 target "ImageViewer" do
   pod 'CHTCollectionViewWaterfallLayout'
-  pod "AFNetworking", "~> 2.0"
-  pod 'Ono'
+  pod "AFNetworking", "~> 3.0"
+  pod 'JSONModel'
+  pod 'TYPagerController'
+  pod 'ZFPlayer', '~> 3.0'
 end

@@ -7,12 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Const.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DetailItem : NSObject
 @property(nonatomic, strong) NSString *imgPath;
 @property(nonatomic, strong) NSString *imgName;
+@property(nonatomic, assign) float imgWidth;
+@property(nonatomic, assign) float imgHeight;
+
++(DetailItem *) convert:(NSDictionary *) dic tabIndex: (int) tabIndex;
 @end
 
 NS_ASSUME_NONNULL_END

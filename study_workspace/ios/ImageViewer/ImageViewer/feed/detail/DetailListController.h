@@ -9,9 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "DetailViewCell.h"
 #import "Common.h"
-#import "Cats.h"
 #import "WMPhotoBrowser.h"
 #import "UIView+WMFrame.h"
+#import "DetailItem.h"
+#import "UIImageView+WebCache.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (strong, nonatomic) NSString *picTitle;
 @property (strong, nonatomic) NSString *groupPath;
+@property(nonatomic, assign) int tabIndex;
 
 @end
 

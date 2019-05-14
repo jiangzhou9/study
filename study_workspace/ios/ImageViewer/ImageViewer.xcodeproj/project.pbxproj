@@ -20,8 +20,6 @@
 		503F76B6222FA821002A0507 /* cat4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 503F76B2222FA821002A0507 /* cat4.jpg */; };
 		503F76C22230FC63002A0507 /* DetailListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 503F76C12230FC63002A0507 /* DetailListController.m */; };
 		503F76C5223104A8002A0507 /* DetailViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 503F76C4223104A8002A0507 /* DetailViewCell.m */; };
-		503F76CC2231177B002A0507 /* Cats.m in Sources */ = {isa = PBXBuildFile; fileRef = 503F76CB2231177B002A0507 /* Cats.m */; };
-		503F76CF223117A7002A0507 /* CatImg.m in Sources */ = {isa = PBXBuildFile; fileRef = 503F76CE223117A7002A0507 /* CatImg.m */; };
 		503F76DA22312CDD002A0507 /* NetworkUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 503F76D922312CDD002A0507 /* NetworkUtil.m */; };
 		503F76DF22316A48002A0507 /* ScreenUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 503F76DE22316A48002A0507 /* ScreenUtil.m */; };
 		503F77CC2233585A002A0507 /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 503F779922335859002A0507 /* MKAnnotationView+WebCache.m */; };
@@ -53,10 +51,9 @@
 		503F77EF22354AC8002A0507 /* Const.m in Sources */ = {isa = PBXBuildFile; fileRef = 503F77EE22354AC8002A0507 /* Const.m */; };
 		504CA00C223B89E70047E393 /* FeedController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504CA00B223B89E70047E393 /* FeedController.m */; };
 		504FDC13223A924700A763EB /* DetailItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 504FDC12223A924700A763EB /* DetailItem.m */; };
-		50FD1219223E88A9009AB9BA /* FileUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 503F76D622312C6C002A0507 /* FileUtil.m */; };
+		50D5BD86227708CC0038EB8F /* PagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D5BD85227708CC0038EB8F /* PagerViewController.m */; };
+		50D5BD8D227811F90038EB8F /* TabItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D5BD8C227811F90038EB8F /* TabItem.m */; };
 		50FD121C223E8C36009AB9BA /* ColorUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 50FD121B223E8C36009AB9BA /* ColorUtil.m */; };
-		50FD121F223E8D4E009AB9BA /* CatListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50FD121E223E8D4E009AB9BA /* CatListController.m */; };
-		50FD1223223E8DE9009AB9BA /* CatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 50FD1222223E8DE9009AB9BA /* CatCell.m */; };
 		B6D2C2F41226232F28757EA3 /* libPods-ImageViewer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 33E1EB8277DDA29E705F042F /* libPods-ImageViewer.a */; };
 /* End PBXBuildFile section */
 
@@ -82,12 +79,6 @@
 		503F76C12230FC63002A0507 /* DetailListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailListController.m; sourceTree = "<group>"; };
 		503F76C3223104A8002A0507 /* DetailViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewCell.h; sourceTree = "<group>"; };
 		503F76C4223104A8002A0507 /* DetailViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewCell.m; sourceTree = "<group>"; };
-		503F76CA2231177B002A0507 /* Cats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Cats.h; sourceTree = "<group>"; };
-		503F76CB2231177B002A0507 /* Cats.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Cats.m; sourceTree = "<group>"; };
-		503F76CD223117A7002A0507 /* CatImg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CatImg.h; sourceTree = "<group>"; };
-		503F76CE223117A7002A0507 /* CatImg.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CatImg.m; sourceTree = "<group>"; };
-		503F76D522312C6C002A0507 /* FileUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileUtil.h; sourceTree = "<group>"; };
-		503F76D622312C6C002A0507 /* FileUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FileUtil.m; sourceTree = "<group>"; };
 		503F76D822312CDC002A0507 /* NetworkUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkUtil.h; sourceTree = "<group>"; };
 		503F76D922312CDD002A0507 /* NetworkUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkUtil.m; sourceTree = "<group>"; };
 		503F76DC223168CA002A0507 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
@@ -150,12 +141,12 @@
 		504CA00B223B89E70047E393 /* FeedController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedController.m; sourceTree = "<group>"; };
 		504FDC11223A924700A763EB /* DetailItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailItem.h; sourceTree = "<group>"; };
 		504FDC12223A924700A763EB /* DetailItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailItem.m; sourceTree = "<group>"; };
+		50D5BD84227708CC0038EB8F /* PagerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PagerViewController.h; sourceTree = "<group>"; };
+		50D5BD85227708CC0038EB8F /* PagerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PagerViewController.m; sourceTree = "<group>"; };
+		50D5BD8B227811F90038EB8F /* TabItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TabItem.h; sourceTree = "<group>"; };
+		50D5BD8C227811F90038EB8F /* TabItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TabItem.m; sourceTree = "<group>"; };
 		50FD121A223E8C36009AB9BA /* ColorUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorUtil.h; sourceTree = "<group>"; };
 		50FD121B223E8C36009AB9BA /* ColorUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ColorUtil.m; sourceTree = "<group>"; };
-		50FD121D223E8D4E009AB9BA /* CatListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CatListController.h; sourceTree = "<group>"; };
-		50FD121E223E8D4E009AB9BA /* CatListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CatListController.m; sourceTree = "<group>"; };
-		50FD1221223E8DE9009AB9BA /* CatCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CatCell.h; sourceTree = "<group>"; };
-		50FD1222223E8DE9009AB9BA /* CatCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CatCell.m; sourceTree = "<group>"; };
 		AC9D7A0ECC8A259F953A6212 /* Pods-ImageViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageViewer.debug.xcconfig"; path = "Target Support Files/Pods-ImageViewer/Pods-ImageViewer.debug.xcconfig"; sourceTree = "<group>"; };
 		E82C208F55005F1A9EC87191 /* Pods-ImageViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageViewer.release.xcconfig"; path = "Target Support Files/Pods-ImageViewer/Pods-ImageViewer.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -193,7 +184,7 @@
 		503F7680222EA843002A0507 /* ImageViewer */ = {
 			isa = PBXGroup;
 			children = (
-				50FD1220223E8DC1009AB9BA /* cat */,
+				50D5BD83227708990038EB8F /* main */,
 				503F76D0223128C4002A0507 /* feed */,
 				503F76D1223128E2002A0507 /* setting */,
 				503F76C92231175B002A0507 /* utils */,
@@ -225,14 +216,8 @@
 		503F76C92231175B002A0507 /* utils */ = {
 			isa = PBXGroup;
 			children = (
-				503F76CA2231177B002A0507 /* Cats.h */,
-				503F76CB2231177B002A0507 /* Cats.m */,
-				503F76CD223117A7002A0507 /* CatImg.h */,
-				503F76CE223117A7002A0507 /* CatImg.m */,
 				50FD121A223E8C36009AB9BA /* ColorUtil.h */,
 				50FD121B223E8C36009AB9BA /* ColorUtil.m */,
-				503F76D522312C6C002A0507 /* FileUtil.h */,
-				503F76D622312C6C002A0507 /* FileUtil.m */,
 				503F76D822312CDC002A0507 /* NetworkUtil.h */,
 				503F76D922312CDD002A0507 /* NetworkUtil.m */,
 				503F76DD22316A48002A0507 /* ScreenUtil.h */,
@@ -383,15 +368,15 @@
 			path = third;
 			sourceTree = "<group>";
 		};
-		50FD1220223E8DC1009AB9BA /* cat */ = {
+		50D5BD83227708990038EB8F /* main */ = {
 			isa = PBXGroup;
 			children = (
-				50FD121D223E8D4E009AB9BA /* CatListController.h */,
-				50FD121E223E8D4E009AB9BA /* CatListController.m */,
-				50FD1221223E8DE9009AB9BA /* CatCell.h */,
-				50FD1222223E8DE9009AB9BA /* CatCell.m */,
+				50D5BD84227708CC0038EB8F /* PagerViewController.h */,
+				50D5BD85227708CC0038EB8F /* PagerViewController.m */,
+				50D5BD8B227811F90038EB8F /* TabItem.h */,
+				50D5BD8C227811F90038EB8F /* TabItem.m */,
 			);
-			path = cat;
+			path = main;
 			sourceTree = "<group>";
 		};
 		9C3AF8B92B05990428281545 /* Frameworks */ = {
@@ -525,9 +510,7 @@
 				503F76DF22316A48002A0507 /* ScreenUtil.m in Sources */,
 				503F77D22233585A002A0507 /* SDWebImageDownloaderOperation.m in Sources */,
 				503F77E22233585A002A0507 /* WMCollectionViewFlowLayout.m in Sources */,
-				503F76CF223117A7002A0507 /* CatImg.m in Sources */,
 				503F77CE2233585A002A0507 /* SDImageCache.m in Sources */,
-				503F76CC2231177B002A0507 /* Cats.m in Sources */,
 				503F7689222EA843002A0507 /* SettingViewController.m in Sources */,
 				503F76DA22312CDD002A0507 /* NetworkUtil.m in Sources */,
 				503F77CF2233585A002A0507 /* SDWebImageCompat.m in Sources */,
@@ -536,7 +519,6 @@
 				503F7683222EA843002A0507 /* AppDelegate.m in Sources */,
 				503F77D32233585A002A0507 /* SDWebImageManager.m in Sources */,
 				503F77D12233585A002A0507 /* SDWebImageDownloader.m in Sources */,
-				50FD1223223E8DE9009AB9BA /* CatCell.m in Sources */,
 				503F77EF22354AC8002A0507 /* Const.m in Sources */,
 				503F77DA2233585A002A0507 /* UIImageView+WebCache.m in Sources */,
 				503F77D92233585A002A0507 /* UIImageView+HighlightedWebCache.m in Sources */,
@@ -544,7 +526,6 @@
 				503F77DE2233585A002A0507 /* MBProgressHUD.m in Sources */,
 				504CA00C223B89E70047E393 /* FeedController.m in Sources */,
 				503F77D62233585A002A0507 /* UIImage+GIF.m in Sources */,
-				50FD1219223E88A9009AB9BA /* FileUtil.m in Sources */,
 				504FDC13223A924700A763EB /* DetailItem.m in Sources */,
 				503F77D42233585A002A0507 /* SDWebImagePrefetcher.m in Sources */,
 				503F77E32233585A002A0507 /* WMPhotoBrowser.m in Sources */,
@@ -552,12 +533,13 @@
 				503F77E9223541B2002A0507 /* CoverItem.m in Sources */,
 				503F77E42233585A002A0507 /* WMPhotoBrowserCell.m in Sources */,
 				50FD121C223E8C36009AB9BA /* ColorUtil.m in Sources */,
+				50D5BD8D227811F90038EB8F /* TabItem.m in Sources */,
+				50D5BD86227708CC0038EB8F /* PagerViewController.m in Sources */,
 				503F77E02233585A002A0507 /* UIViewController+WMExtension.m in Sources */,
 				503F77D72233585A002A0507 /* UIImage+MultiFormat.m in Sources */,
 				503F77D02233585A002A0507 /* SDWebImageDecoder.m in Sources */,
 				503F77DB2233585A002A0507 /* UIView+WebCacheOperation.m in Sources */,
 				503F77DF2233585A002A0507 /* UIView+WMFrame.m in Sources */,
-				50FD121F223E8D4E009AB9BA /* CatListController.m in Sources */,
 				503F7694222EA844002A0507 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
