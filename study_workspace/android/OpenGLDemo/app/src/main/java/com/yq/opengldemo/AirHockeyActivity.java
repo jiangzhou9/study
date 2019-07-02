@@ -56,14 +56,13 @@ public class AirHockeyActivity extends AppCompatActivity {
             mContext = context;
 
             float[] tableVerticesWithTrangles = {
-                //triangle 1
-                -0.5f, -0.5f,
-                0.5f, 0.5f,
-                -0.5f, 0.5f,
-                //triangle 2
+                // Triangle Fan
+                0,     0,
                 -0.5f, -0.5f,
                 0.5f, -0.5f,
-                0.5f, 0.5f,
+                0.5f,  0.5f,
+                -0.5f,  0.5f,
+                -0.5f, -0.5f,
 
                 //Line 1
                 -0.5f, 0f,
@@ -152,7 +151,7 @@ public class AirHockeyActivity extends AppCompatActivity {
             and the third argument tells OpenGL to read in six vertices. Since there are three vertices per triangle,
             this call will end up drawing two triangles.
             read info from tableVerticesWithTriangles*/
-            GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
+            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 6);
 
             //draw dividing line, read info from tableVerticesWithTriangles
             GLES20.glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
