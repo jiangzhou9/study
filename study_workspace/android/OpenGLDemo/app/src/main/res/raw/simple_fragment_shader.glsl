@@ -9,13 +9,14 @@ important when it comes to a vertex’s position, the OpenGL designers decided t
 shaders to the highest setting, highp, by default.
 */
 precision mediump float;
+varying vec4 v_Color;
 
 //Unlike an attribute that is set on each vertex, a uniform keeps the same value for all vertices until we change it again
 //u_Color is also a four-component vector:rgba
-uniform vec4 u_Color;
+//uniform vec4 u_Color;
 
 void main()
 {
     //Our shader must write something to gl_FragColor
-    gl_FragColor = u_Color;
+    gl_FragColor = v_Color;
 }
