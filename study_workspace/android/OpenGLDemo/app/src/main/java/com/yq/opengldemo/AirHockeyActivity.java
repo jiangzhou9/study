@@ -1,15 +1,14 @@
-package com.sohu.changeface.opengldemo;
+package com.yq.opengldemo;
 
 import android.content.Context;
-import android.graphics.Shader;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import com.sohu.changeface.opengldemo.util.L;
-import com.sohu.changeface.opengldemo.util.ShaderHelper;
-import com.sohu.changeface.opengldemo.util.TextResourceReader;
+import com.yq.opengldemo.util.L;
+import com.yq.opengldemo.util.ShaderHelper;
+import com.yq.opengldemo.util.TextResourceReader;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

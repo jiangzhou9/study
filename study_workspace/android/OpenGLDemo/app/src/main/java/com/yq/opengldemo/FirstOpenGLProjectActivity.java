@@ -1,11 +1,11 @@
-package com.sohu.changeface.opengldemo;
+package com.yq.opengldemo;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import com.sohu.changeface.opengldemo.util.L;
+import com.yq.opengldemo.util.L;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;

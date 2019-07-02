@@ -1,4 +1,4 @@
-package com.sohu.changeface.opengldemo.util;
+package com.yq.opengldemo.util;
 
 import android.opengl.GLES20;
 
