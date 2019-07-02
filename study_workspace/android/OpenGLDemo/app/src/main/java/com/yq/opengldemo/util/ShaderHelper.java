@@ -66,7 +66,7 @@ public class ShaderHelper {
         return programObjectId;
     }
 
-    public static boolean validataProgram(int programObjectId) {
+    public static boolean validateProgram(int programObjectId) {
         GLES20.glValidateProgram(programObjectId);
 
         final int[] validateStatus = new int[1];
