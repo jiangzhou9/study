@@ -16,29 +16,6 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
-import static android.opengl.GLES20.GL_FLOAT;
-import static android.opengl.GLES20.GL_LINES;
-import static android.opengl.GLES20.GL_POINTS;
-import static android.opengl.GLES20.GL_TRIANGLE_FAN;
-import static android.opengl.GLES20.glClear;
-import static android.opengl.GLES20.glClearColor;
-import static android.opengl.GLES20.glDrawArrays;
-import static android.opengl.GLES20.glEnableVertexAttribArray;
-import static android.opengl.GLES20.glGetAttribLocation;
-import static android.opengl.GLES20.glUseProgram;
-import static android.opengl.GLES20.glVertexAttribPointer;
-import static android.opengl.GLES20.glViewport;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
-import android.content.Context;
-import android.opengl.GLSurfaceView.Renderer;
 
 public class AirHockeyActivity extends AppCompatActivity {
 
@@ -57,153 +34,158 @@ public class AirHockeyActivity extends AppCompatActivity {
 
     private static class AirHockeyRenderer implements GLSurfaceView.Renderer {
 
-        private static final String A_POSITION = "a_Position";
-        private static final String A_COLOR = "a_Color";
+        private static final int BYTES_PER_FLOAT = 4;
+        //x and y for a point for tableVerticesWithTrangles
         private static final int POSITION_COMPONENT_COUNT = 2;
         private static final int COLOR_COMPONENT_COUNT = 3;
-        private static final int BYTES_PER_FLOAT = 4;
-        private static final int STRIDE =
-            (POSITION_COMPONENT_COUNT + COLOR_COMPONENT_COUNT) * BYTES_PER_FLOAT;
+        /*The stride tells OpenGL the interval between each position or each color.
+        As we now have both a position and a color attribute in the same data array, OpenGL can no
+        longer assume that the next position follows immediately after the previous position.
+        Once OpenGL has read the position for a vertex, it will have to skip over the color for
+        the current vertex if it wants to read the position for the next vertex. We’ll use the
+        stride to tell OpenGL how many bytes are between each position so that it knows how far it has to skip. */
+        private static final int STRIDE = (POSITION_COMPONENT_COUNT + COLOR_COMPONENT_COUNT) * BYTES_PER_FLOAT;
+
+        private static final String A_COLOR = "a_Color";
+        private static final String A_POSITION = "a_Position";
+
+        private int aColorLocation;
+        private int aPositionLocation;
 
         private final FloatBuffer vertexData;
-        private final Context context;
 
         private int program;
-        private int aPositionLocation;
-        private int aColorLocation;
+
+        private Context mContext;
 
         public AirHockeyRenderer(Context context) {
-            this.context = context;
-        /*
-        float[] tableVerticesWithTriangles = {
-            // Triangle Fan
-               0,     0,
-            -0.5f, -0.5f,
-             0.5f, -0.5f,
-             0.5f,  0.5f,
-            -0.5f,  0.5f,
-            -0.5f, -0.5f,
+            mContext = context;
 
-            // Line 1
-            -0.5f, 0f,
-             0.5f, 0f,
-
-            // Mallets
-            0f, -0.25f,
-            0f,  0.25f
-        };*/
-
-            //
-            // Vertex data is stored in the following manner:
-            //
-            // The first two numbers are part of the position: X, Y
-            // The next three numbers are part of the color: R, G, B
-            //
-            float[] tableVerticesWithTriangles = {
-                // Order of coordinates: X, Y, R, G, B
+            float[] tableVerticesWithTrangles = {
+                //order of coordinates: x, y, r, g, b
 
                 // Triangle Fan
-                0f,    0f,   1f,   1f,   1f,
-                -0.5f, -0.5f, 0.7f, 0.7f, 0.7f,
-                0.5f, -0.5f, 0.7f, 0.7f, 0.7f,
-                0.5f,  0.5f, 0.7f, 0.7f, 0.7f,
-                -0.5f,  0.5f, 0.7f, 0.7f, 0.7f,
-                -0.5f, -0.5f, 0.7f, 0.7f, 0.7f,
+                0,      0,      1f,     1f,     1f,
+                -0.5f,  -0.5f,  0.7f,   0.7f,   0.7f,
+                0.5f,   -0.5f,  0.7f,   0.7f,   0.7f,
+                0.5f,   0.5f,   0.7f,   0.7f,   0.7f,
+                -0.5f,  0.5f,   0.7f,   0.7f,   0.7f,
+                -0.5f,  -0.5f,  0.7f,   0.7f,   0.7f,
 
-                // Line 1
-                -0.5f, 0f, 1f, 0f, 0f,
-                0.5f, 0f, 1f, 0f, 0f,
+                //Line 1
+                -0.5f,  0f,     1f,     0f,     0f,
+                0.5f,   0f,     1f,     0f,     0f,
 
-                // Mallets
-                0f, -0.25f, 0f, 0f, 1f,
-                0f,  0.25f, 1f, 0f, 0f
+                //Mallets
+                0f,     -0.25f, 0f,     0f,     1f,
+                0f,     0.25f,  1f,     0f,     0f,
             };
 
             vertexData = ByteBuffer
-                .allocateDirect(tableVerticesWithTriangles.length * BYTES_PER_FLOAT)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer();
-
-            vertexData.put(tableVerticesWithTriangles);
+                //allocated a block of native memory,this memory will not be managed by the garbage collector
+                .allocateDirect(tableVerticesWithTrangles.length * BYTES_PER_FLOAT)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer();
+            //copy data from Dalvik’s memory to native memory
+            vertexData.put(tableVerticesWithTrangles);
         }
 
         @Override
-        public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+            L.e("onSurfaceCreated");
+            //设置清空屏幕用的颜色,rgba
+            GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-            String vertexShaderSource = TextResourceReader
-                .readTextFileFromResource(context, R.raw.simple_vertex_shader);
-            String fragmentShaderSource = TextResourceReader
-                .readTextFileFromResource(context, R.raw.simple_fragment_shader);
+            String vertexShaderSouce = TextResourceReader.readTextFileFromResource(mContext, R.raw.simple_vertex_shader);
+            String fragmentShaderSource = TextResourceReader.readTextFileFromResource(mContext, R.raw.simple_fragment_shader);
 
-            int vertexShader = ShaderHelper.compileVertexShader(vertexShaderSource);
-            int fragmentShader = ShaderHelper
-                .compileFragmentShader(fragmentShaderSource);
+            int vertexShader = ShaderHelper.compileVertexShader(vertexShaderSouce);
+            int fragmentShader = ShaderHelper.compileFragmentShader(fragmentShaderSource);
 
+            //When OpenGL links our shaders into a program, it will actually associate each uniform defined in the vertex shader with a location number.
             program = ShaderHelper.linkProgram(vertexShader, fragmentShader);
+            ShaderHelper.validateProgram(program);
 
-//            if (LoggerConfig.ON) {
-                ShaderHelper.validateProgram(program);
-//            }
+            GLES20.glUseProgram(program);
 
-            glUseProgram(program);
+            aColorLocation = GLES20.glGetAttribLocation(program, A_COLOR);
+            aPositionLocation = GLES20.glGetAttribLocation(program, A_POSITION);
 
-            aPositionLocation = glGetAttribLocation(program, A_POSITION);
-            aColorLocation = glGetAttribLocation(program, A_COLOR);
-
-            // Bind our data, specified by the variable vertexData, to the vertex
-            // attribute at location A_POSITION_LOCATION.
+            //tell OpenGL where to find data for our attribute a_Position.
+            //make sure that it’ll read our data starting at the beginning and not at the middle or the end.
             vertexData.position(0);
-            glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT,
-                false, STRIDE, vertexData);
+            //tell OpenGL that it can find the data for a_Position in the buffer vertexData
+            //Passing incorrect arguments to glVertexAttribPointer() can lead to strange results and can even cause the program to crash. These kinds of crashes can be hard to trace
+            GLES20.glVertexAttribPointer(
+                aPositionLocation,
+                /* Note that we’re only passing two components per vertex:(POSITION_COMPONENT_COUNT), but in the shader,
+                    a_Position is defined as a vec4, which has four components. If a component is not specified,
+                    OpenGL will set the first three components to 0 and the last component to 1 by default. */
+                POSITION_COMPONENT_COUNT,
+                GLES20.GL_FLOAT,
+                //This only applies if we use integer data, so we can safely ignore it for now.
+                false,
+                //applies when we store more than one attribute in a single array.
+                STRIDE,
+                //This tells OpenGL where to read the data. Don’t forget that it will start reading from the buffer’s current position,
+                // so if we hadn’t called vertexData.position(0), it would probably try to read past the end of the buffer and crash our application.
+                vertexData);
 
-            glEnableVertexAttribArray(aPositionLocation);
+            //now knows where to find all the data it needs
+            GLES20.glEnableVertexAttribArray(aPositionLocation);
 
-            // Bind our data, specified by the variable vertexData, to the vertex
-            // attribute at location A_COLOR_LOCATION.
+
+            //when OpenGL starts reading in the color attributes, we want it to start at the first color attribute, not the first position attribute.
             vertexData.position(POSITION_COMPONENT_COUNT);
-            glVertexAttribPointer(aColorLocation, COLOR_COMPONENT_COUNT, GL_FLOAT,
-                false, STRIDE, vertexData);
-
-            glEnableVertexAttribArray(aColorLocation);
+            GLES20.glVertexAttribPointer(
+                aColorLocation,
+                COLOR_COMPONENT_COUNT,
+                GLES20.GL_FLOAT,
+                false,
+                /*The stride tells OpenGL how many bytes are between each color, so that when it
+                reads in the colors for all of the vertices, it knows how many bytes it needs to
+                skip to read the color for the next vertex.*/
+                STRIDE,
+                vertexData);
+            GLES20.glEnableVertexAttribArray(aColorLocation);
         }
 
-        /**
-         * onSurfaceChanged is called whenever the surface has changed. This is
-         * called at least once when the surface is initialized. Keep in mind that
-         * Android normally restarts an Activity on rotation, and in that case, the
-         * renderer will be destroyed and a new one created.
-         *
-         * @param width
-         *            The new width, in pixels.
-         * @param height
-         *            The new height, in pixels.
-         */
         @Override
-        public void onSurfaceChanged(GL10 glUnused, int width, int height) {
-            // Set the OpenGL viewport to fill the entire surface.
-            glViewport(0, 0, width, height);
+        public void onSurfaceChanged(GL10 gl, int width, int height) {
+            L.e("onSurfaceChanged");
+            //opengl可以渲染的surface的大小
+            GLES20.glViewport(0, 0, width, height);
         }
 
-        /**
-         * OnDrawFrame is called whenever a new frame needs to be drawn. Normally,
-         * this is done at the refresh rate of the screen.
-         */
         @Override
-        public void onDrawFrame(GL10 glUnused) {
-            // Clear the rendering surface.
-            glClear(GL_COLOR_BUFFER_BIT);
+        public void onDrawFrame(GL10 gl) {
+            L.e("onDrawFrame");
+            //擦除屏幕所有颜色，并用glClearColor设置的颜色填充屏幕
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-            // Draw the table.
-            glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+            //draw table
+            /*update the value of u_Color in our shader code. Unlike attributes,
+            uniforms don’t have default components, so if a uniform is defined as a vec4 in our shader,
+            we need to provide all four components.*/
+            //  delete:Since we’ve already associated our vertex data with a_Color, all we need to do is call glDrawArrays(), and OpenGL will automatically read in the color attributes from our vertex data.
+//            GLES20.glDrawArrays(uColorLocation, 1.0f, 1.0f, 1.0f, 1.0f);
+            /*The second argument tells OpenGL to read in vertices starting at the beginning of our vertex array,
+            and the third argument tells OpenGL to read in six vertices. Since there are three vertices per triangle,
+            this call will end up drawing two triangles.
+            read info from tableVerticesWithTriangles*/
+            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 6);
 
-            // Draw the center dividing line.
-            glDrawArrays(GL_LINES, 6, 2);
+            //draw dividing line, read info from tableVerticesWithTriangles
+//            GLES20.glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+            GLES20.glDrawArrays(GLES20.GL_LINES, 6, 2);
 
-            // Draw the first mallet.
-            glDrawArrays(GL_POINTS, 8, 1);
-
-            // Draw the second mallet.
-            glDrawArrays(GL_POINTS, 9, 1);
+            //draw mallets
+            //first
+//            GLES20.glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+            GLES20.glDrawArrays(GLES20.GL_POINTS, 8, 1);
+            //second
+//            GLES20.glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+            GLES20.glDrawArrays(GLES20.GL_POINTS, 9, 1);
         }
     }
 }
