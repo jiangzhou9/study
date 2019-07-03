@@ -1,9 +1,11 @@
-package com.yq.opengldemo;
+package com.yq.opengldemo.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+
+import com.yq.opengldemo.R;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

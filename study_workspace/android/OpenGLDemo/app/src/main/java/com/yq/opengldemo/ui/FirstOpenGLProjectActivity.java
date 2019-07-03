@@ -1,10 +1,11 @@
-package com.yq.opengldemo;
+package com.yq.opengldemo.ui;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.yq.opengldemo.R;
 import com.yq.opengldemo.util.L;
 
 import javax.microedition.khronos.egl.EGLConfig;
