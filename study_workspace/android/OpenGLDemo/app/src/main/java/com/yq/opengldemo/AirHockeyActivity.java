@@ -3,6 +3,7 @@ package com.yq.opengldemo;
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -48,9 +49,13 @@ public class AirHockeyActivity extends AppCompatActivity {
 
         private static final String A_COLOR = "a_Color";
         private static final String A_POSITION = "a_Position";
+        private static final String U_MATRIX = "u_Matrix";
+
+        private final float[] projectionMatrix = new float[16];
 
         private int aColorLocation;
         private int aPositionLocation;
+        private int uMatrixLocation;
 
         private final FloatBuffer vertexData;
 
@@ -66,19 +71,19 @@ public class AirHockeyActivity extends AppCompatActivity {
 
                 // Triangle Fan
                 0,      0,      1f,     1f,     1f,
-                -0.5f,  -0.5f,  0.7f,   0.7f,   0.7f,
-                0.5f,   -0.5f,  0.7f,   0.7f,   0.7f,
-                0.5f,   0.5f,   0.7f,   0.7f,   0.7f,
-                -0.5f,  0.5f,   0.7f,   0.7f,   0.7f,
-                -0.5f,  -0.5f,  0.7f,   0.7f,   0.7f,
+                -0.5f,  -0.8f,  0.7f,   0.7f,   0.7f,
+                0.5f,   -0.8f,  0.7f,   0.7f,   0.7f,
+                0.5f,   0.8f,   0.7f,   0.7f,   0.7f,
+                -0.5f,  0.8f,   0.7f,   0.7f,   0.7f,
+                -0.5f,  -0.8f,  0.7f,   0.7f,   0.7f,
 
                 //Line 1
                 -0.5f,  0f,     1f,     0f,     0f,
                 0.5f,   0f,     1f,     0f,     0f,
 
                 //Mallets
-                0f,     -0.25f, 0f,     0f,     1f,
-                0f,     0.25f,  1f,     0f,     0f,
+                0f,     -0.4f, 0f,     0f,     1f,
+                0f,     0.4f,  1f,     0f,     0f,
             };
 
             vertexData = ByteBuffer
@@ -110,6 +115,7 @@ public class AirHockeyActivity extends AppCompatActivity {
 
             aColorLocation = GLES20.glGetAttribLocation(program, A_COLOR);
             aPositionLocation = GLES20.glGetAttribLocation(program, A_POSITION);
+            uMatrixLocation = GLES20.glGetUniformLocation(program, U_MATRIX);
 
             //tell OpenGL where to find data for our attribute a_Position.
             //make sure that it’ll read our data starting at the beginning and not at the middle or the end.
@@ -155,6 +161,16 @@ public class AirHockeyActivity extends AppCompatActivity {
             L.e("onSurfaceChanged");
             //opengl可以渲染的surface的大小
             GLES20.glViewport(0, 0, width, height);
+
+            //create an orthographic projection matrix
+            final float aspectRatio = width > height ? (float) width / (float) height : (float) height / (float) width;
+            if (width > height) {
+                //landscape
+                Matrix.orthoM(projectionMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
+            } else {
+                //potrait or square
+                Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
+            }
         }
 
         @Override
@@ -162,6 +178,9 @@ public class AirHockeyActivity extends AppCompatActivity {
             L.e("onDrawFrame");
             //擦除屏幕所有颜色，并用glClearColor设置的颜色填充屏幕
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
+            //send the orthographic projection matrix to the shader
+            GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, projectionMatrix, 0);
 
             //draw table
             /*update the value of u_Color in our shader code. Unlike attributes,
