@@ -9,6 +9,7 @@ public class HookHelper {
 
     /*
     主要原理就是把locationManager的mService用反射替换成代理fakeMService
+    见MainActivity的change方法
      */
     public static void hookLocationManager(LocationManager locationManager) {
         try {

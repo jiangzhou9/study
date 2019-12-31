@@ -14,7 +14,11 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.locationmanagerhooker.dynamicproxy.Main;
+import com.example.locationmanagerhooker.test.Car;
+import com.example.locationmanagerhooker.test.Person;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
 import java.util.List;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -33,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Main.main();
+//                Main.main();
+                change();
             }
         });
 
@@ -93,5 +98,24 @@ public class MainActivity extends AppCompatActivity {
         String currentPosition = "latitude is " + location.getLatitude() + "\n"
             + "longitude is " + location.getLongitude();
         Log.i("MainApplication", currentPosition);
+    }
+
+    //测试，修改一个类中的变量为另外一个
+    private void change() {
+        Person person = new Person("name1", new Car("benz"));
+
+        try {
+            Class<?> personClass = Class.forName("com.example.locationmanagerhooker.test.Person");
+
+            Car anotherCar = new Car("bmw");
+
+            Field field2 = personClass.getDeclaredField("car");
+            field2.setAccessible(true);
+            field2.set(person, anotherCar);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("change test person'car: " + person.getCar());
     }
 }
