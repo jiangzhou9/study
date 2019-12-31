@@ -8,6 +8,7 @@
 
 #import "WMPhotoBrowserCell.h"
 #import "UIImageView+WebCache.h"
+#import "PINRemoteImage/PINImageView+PINRemoteImage.h"
 
 @interface WMPhotoBrowserCell ()<UIGestureRecognizerDelegate,UIScrollViewDelegate> {
     CGFloat _aspectRatio;
@@ -120,7 +121,11 @@
         NSString *aString = (NSString *)model;
         if ([aString rangeOfString:@"http"].location!=NSNotFound) {
             NSString *utf8ImgUrl = [aString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-            [self.imageView sd_setImageWithURL:[NSURL URLWithString:utf8ImgUrl] placeholderImage:nil completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+//            [self.imageView pin_setImageFromURL:[NSURL URLWithString:utf8ImgUrl] placeholderImage:nil completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+//                [self resizeSubviews];
+//            }];
+            [self.imageView pin_setImageFromURL:[NSURL URLWithString:utf8ImgUrl]
+            completion:^(PINRemoteImageManagerResult *result) {
                 [self resizeSubviews];
             }];
         }else{
@@ -128,22 +133,14 @@
         }
     }else if ([model isKindOfClass:[NSURL class]]){
         NSURL *aURL = (NSURL *)model;
-        [self.imageView sd_setImageWithURL:aURL placeholderImage:[UIImage imageNamed:@"placeholder"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+//        [self.imageView sd_setImageWithURL:aURL placeholderImage:[UIImage imageNamed:@"placeholder"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+//            [self resizeSubviews];
+//        }];
+        [self.imageView pin_setImageFromURL:aURL
+        completion:^(PINRemoteImageManagerResult *result) {
             [self resizeSubviews];
         }];
     }
-//    else if ([model isKindOfClass:[IMAMsg class]]){
-//        IMAMsg *aImageMsg = (IMAMsg *)model;
-//        TIMImageElem *elem = (TIMImageElem *)[aImageMsg.msg getElem:0];
-//        [elem asyncThumbImage:^(NSString *path, UIImage *image, BOOL succ, BOOL isAsync) {
-//            if ([path containsString:@"http"]) {
-//                [self.imageView sd_setImageWithURL:[NSURL URLWithString:path] placeholderImage:[UIImage imageNamed:@"ablePlaceHolder"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-//                    [self resizeSubviews];
-//                }];
-//            }
-//            
-//        } inMsg:aImageMsg];
-//    }
     [self resizeSubviews];
 }
 - (void)singleTap:(UITapGestureRecognizer *)tap {

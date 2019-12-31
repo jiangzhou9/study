@@ -59,8 +59,9 @@
     
     NSString *imgUrl = [self.imgArray objectAtIndex:indexPath.item].imgPath;
     NSString *utf8ImgUrl = [imgUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-    [cell.img sd_setImageWithURL:[NSURL URLWithString: utf8ImgUrl] placeholderImage:nil];
-
+//    [cell.img sd_setImageWithURL:[NSURL URLWithString: utf8ImgUrl] placeholderImage:nil];
+    [cell.img pin_setImageFromURL:[NSURL URLWithString: utf8ImgUrl]];
+    
     return cell;
 }
 

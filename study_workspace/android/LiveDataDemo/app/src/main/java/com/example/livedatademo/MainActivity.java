@@ -15,12 +15,15 @@ import com.example.livedatademo.networklivedata.NetworkLiveData;
 
 import java.util.Random;
 
+/**
+ * https://blog.csdn.net/gdutxiaoxu/article/details/86660760
+ */
 public class MainActivity extends AppCompatActivity {
 
     private String param = "param";
 
     private TextView tv;
-    //todo 这里model完全可以删了，什么用？
+    //todo 这里model完全可以删了，什么用？就是为了分离，类似于presenter
     private UserViewModel model;
 
     @Override

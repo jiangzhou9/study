@@ -14,6 +14,7 @@
 #import "CoverItem.h"
 #import "SettingViewController.h"
 #import "UIImageView+WebCache.h"
+#import "PINRemoteImage/PINImageView+PINRemoteImage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

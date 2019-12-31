@@ -1,7 +1,0 @@
-platform :ios, '7.0'  
-
-target "ImageViewer" do
-  pod 'CHTCollectionViewWaterfallLayout'
-  pod "AFNetworking", "~> 2.0"
-  pod 'Ono'
-end

@@ -13,6 +13,7 @@
 #import "UIView+WMFrame.h"
 #import "DetailItem.h"
 #import "UIImageView+WebCache.h"
+#import "PINRemoteImage/PINImageView+PINRemoteImage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

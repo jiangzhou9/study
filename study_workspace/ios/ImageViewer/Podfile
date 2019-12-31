@@ -1,9 +1,11 @@
-platform :ios, '7.0'  
+platform :ios, '8.0'
 
 target "ImageViewer" do
+  pod 'SDWebImage', '~> 5.2.5'
   pod 'CHTCollectionViewWaterfallLayout'
   pod "AFNetworking", "~> 3.0"
   pod 'JSONModel'
   pod 'TYPagerController'
   pod 'ZFPlayer', '~> 3.0'
+  pod 'PINRemoteImage', '3.0.0-beta.14'
 end

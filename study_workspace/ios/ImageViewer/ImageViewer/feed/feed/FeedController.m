@@ -79,8 +79,10 @@
                                                                    forIndexPath:indexPath];
     NSString *imgUrl = [self.listCoverArray objectAtIndex:indexPath.item].coverUrl;
     NSString *utf8ImgUrl = [imgUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-    [cell.imgCover sd_setImageWithURL:[NSURL URLWithString: utf8ImgUrl] placeholderImage:nil];
-
+//    [cell.imgCover sd_setImageWithURL:[NSURL URLWithString: utf8ImgUrl] placeholderImage:nil];
+    [cell.imgCover pin_setImageFromURL:[NSURL URLWithString: utf8ImgUrl]];
+    
+    NSLog(@"url: %@, utfurl: %@", imgUrl, utf8ImgUrl);
     cell.labelTitle.text = [NSString stringWithFormat:@"%@|%@", [self.listCoverArray objectAtIndex:indexPath.item].modelName, [self.listCoverArray objectAtIndex:indexPath.item].title];
     cell.labelDate.text = [self.listCoverArray objectAtIndex:indexPath.item].pubDate;
     cell.labelCount.text = [NSString stringWithFormat:@"%d张", [self.listCoverArray objectAtIndex:indexPath.item].detailCount];
@@ -102,6 +104,7 @@
     
     int width = (SCREEN_WIDTH - 3) / 3;
     int height = width * serverHeight / serverWidth;
+//    NSLog(@"name: %@, wh: %d, %d, swh: %f, %f", [self.listCoverArray objectAtIndex:indexPath.item].title, width, height, serverWidth, serverHeight);
     return CGSizeMake(width, height);
 }
 
@@ -127,7 +130,10 @@
     } else {
         [self.listCoverArray removeAllObjects];
         for (CoverItem *item in self.fullCoverArray) {
-            if ([item.title rangeOfString:content].location != NSNotFound) {
+            if (item.modelName == nil) {
+                continue;
+            }
+            if ([item.modelName rangeOfString:content].location != NSNotFound) {
                 [self.listCoverArray addObject:item];
             }
         }
